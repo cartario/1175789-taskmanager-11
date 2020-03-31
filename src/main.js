@@ -2,10 +2,10 @@
 
 const TOTAL_TASKS = 3;
 
-//переношу куски разметки в js
+// переношу куски разметки в js
 const createSiteMenuTemplate = () => {
-   return (
-      `
+  return (
+    `
       <section class="control__btn-wrap">
           <input type="radio" name="control" id="control__new-task" class="control__input visually-hidden">
           <label for="control__new-task" class="control__label control__label--new-task">+ ADD NEW TASK</label>
@@ -15,7 +15,7 @@ const createSiteMenuTemplate = () => {
           <label for="control__statistic" class="control__label">STATISTICS</label>
         </section>
       `
-    );
+  );
 };
 
 const createSiteFilterTemplate = () => {
@@ -37,7 +37,7 @@ const createSiteFilterTemplate = () => {
         <label for="filter__archive" class="filter__label">Archive <span class="filter__archive-count">115</span></label>
       </section>
     `
-    );
+  );
 };
 
 const createBoardTemplate = () => {
@@ -54,7 +54,7 @@ const createBoardTemplate = () => {
 
       </section>
     `
-    );
+  );
 };
 
 const createEditCardTemplate = () => {
@@ -138,12 +138,12 @@ const createEditCardTemplate = () => {
         </form>
       </article>
     `
-    );
+  );
 };
 
 const createTaskCardTemplate = () => {
   return (
-        `<article class="card card--black">
+    `<article class="card card--black">
           <div class="card__form">
             <div class="card__inner">
               <div class="card__control">
@@ -184,28 +184,28 @@ const createTaskCardTemplate = () => {
           </div>
         </article>
           `
-    );
+  );
 };
 
-//ф-я отрисовки в доме
+// ф-я отрисовки в доме
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
-//находит ключевые узлы
-const main = document.querySelector('.main')
-const mainControl = main.querySelector('.main__control');
+// находит ключевые узлы
+const main = document.querySelector(`.main`);
+const mainControl = main.querySelector(`.main__control`);
 
-//отрисовывает
-render(mainControl, createBoardTemplate(), 'afterend');
-render(mainControl, createSiteFilterTemplate(), 'afterend');
-render(mainControl, createSiteMenuTemplate(), 'beforeend');
+// отрисовывает
+render(mainControl, createBoardTemplate(), `afterend`);
+render(mainControl, createSiteFilterTemplate(), `afterend`);
+render(mainControl, createSiteMenuTemplate(), `beforeend`);
 
 const boardTasks = main.querySelector(`.board__tasks`);
 
 
-render(boardTasks, createEditCardTemplate(), 'afterbegin');
+render(boardTasks, createEditCardTemplate(), `afterbegin`);
 
-for ( let i = 0 ; i <= TOTAL_TASKS; i++) {
-  render(boardTasks, createTaskCardTemplate(), 'beforeend');
+for (let i = 0; i <= TOTAL_TASKS; i++) {
+  render(boardTasks, createTaskCardTemplate(), `beforeend`);
 }
