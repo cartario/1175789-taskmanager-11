@@ -206,6 +206,11 @@ const boardTasks = main.querySelector(`.board__tasks`);
 
 render(boardTasks, createEditCardTemplate(), `afterbegin`);
 
-for (let i = 0; i <= TOTAL_TASKS; i++) {
-  render(boardTasks, createTaskCardTemplate(), `beforeend`);
-}
+const renderTasks = () => {
+  for (let i = 0; i <= TOTAL_TASKS; i++) {
+    render(boardTasks, createTaskCardTemplate(), `beforeend`);
+  }
+};
+
+renderTasks();
+
