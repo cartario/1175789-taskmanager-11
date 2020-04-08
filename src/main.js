@@ -7,6 +7,7 @@ import {createSiteFilterTemplate} from "./components/SiteFilterTemplate.js";
 import {createBoardTemplate} from "./components/BoardTemplate.js";
 import {createEditCardTemplate} from "./components/EditCardTemplate.js";
 import {createTaskCardTemplate} from "./components/TaskCardTemplate.js";
+import {generateFilters} from "./mock/filter.js";
 
 
 // ф-я отрисовки в доме
@@ -17,10 +18,11 @@ const render = (container, template, place) => {
 // находит ключевые узлы
 const main = document.querySelector(`.main`);
 const mainControl = main.querySelector(`.main__control`);
+const filters = generateFilters();
 
 // отрисовывает
 render(mainControl, createBoardTemplate(), `afterend`);
-render(mainControl, createSiteFilterTemplate(), `afterend`);
+render(mainControl, createSiteFilterTemplate(filters), `afterend`);
 render(mainControl, createSiteMenuTemplate(), `beforeend`);
 
 const boardTasks = main.querySelector(`.board__tasks`);
@@ -35,4 +37,5 @@ const renderTasks = () => {
 };
 
 renderTasks();
+
 
