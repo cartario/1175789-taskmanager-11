@@ -1,11 +1,18 @@
+import {timeFormat} from "../utils.js";
+import {MONTH_NAMES} from "../const.js";
+
 export const createEditCardTemplate = (task) => {
 
-  const {color, dueDate, description, repeatingDays} = task;
+  const {color, dueDate, description} = task;
 
-  const date = `20 November`;
-  const time = `14:00`;
+  const isExpired = dueDate instanceof Date && dueDate < Date.now();
+  const isDateShowing = !!dueDate;
+
+  const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getDate()]}` : ``;
+  const time = isDateShowing ? `${timeFormat(dueDate)}` : ``;
   const repeatClass = `card--repeat`;
-  const deadLineClass = `card--deadline`;
+  const deadLineClass = isExpired ? `card--deadline` : ``;
+
 
   const createColorsMarkup = () => {
     return `<input type="radio" id="color-black-4" class="card__color-input card__color-input--black visually-hidden" name="color" value="black">
@@ -43,7 +50,7 @@ export const createEditCardTemplate = (task) => {
 
   return (
     `
-      <article class="card card--edit card--${color} ${repeatClass} ">
+      <article class="card card--edit card--${color} ${repeatClass} ${deadLineClass}">
             <form class="card__form" method="get">
               <div class="card__inner">
                 <div class="card__color-bar">
@@ -62,14 +69,17 @@ export const createEditCardTemplate = (task) => {
                   <div class="card__details">
                     <div class="card__dates">
                       <button class="card__date-deadline-toggle" type="button">
-                        date: <span class="card__date-status">yes</span>
+                        date: <span class="card__date-status">${isDateShowing ? `yes` : `no`}</span>
                       </button>
 
+                      ${isDateShowing ? `
                       <fieldset class="card__date-deadline">
                         <label class="card__input-deadline-wrap">
                           <input class="card__date" type="text" placeholder="" name="date" value="${date} ${time}">
                         </label>
-                      </fieldset>
+                      </fieldset>`
+      : ``
+    }
 
                       <button class="card__repeat-toggle" type="button">
                         repeat:<span class="card__repeat-status">yes</span>

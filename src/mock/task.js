@@ -5,8 +5,9 @@ const generateTask = () => {
     isFavorite: Math.random() > 0.5,
     isArchive: Math.random() > 0.5,
     repeatingDays: null,
-    dueDate: new Date(),
+    dueDate: Math.random() > 0.5 ? new Date() : null,
   };
+
 };
 
 const generateTasks = (count) => {

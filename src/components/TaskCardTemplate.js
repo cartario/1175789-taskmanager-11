@@ -1,17 +1,23 @@
+import {timeFormat} from "../utils.js";
+import {MONTH_NAMES} from "../const.js";
+
 export const createTaskCardTemplate = (task) => {
 
   const {color, dueDate, description, isFavorite, isArchive} = task;
+  const isExpired = dueDate instanceof Date && dueDate < Date.now();
+  const isDateShowing = !!dueDate;
 
   const repeatClass = `card--repeat`;
-  const deadLineClass = `card--deadline`;
+  const deadLineClass = isExpired ? `card--deadline` : ``;
+  const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getDate()]}` : ``;
+  const time = isDateShowing ? `${timeFormat(dueDate)}` : ``;
 
   const favoriteButtonInactiveClass = isFavorite ? `card__btn--disabled` : ``;
   const archiveButtonInactiveClass = isArchive ? `card__btn--disabled` : ``;
-  const date = `20 November`;
-  const time = `14:00`;
+
 
   return (
-    `<article class="card card--${color} ${repeatClass} ">
+    `<article class="card card--${color} ${repeatClass} ${deadLineClass}">
           <div class="card__form">
             <div class="card__inner">
               <div class="card__control">
@@ -50,7 +56,6 @@ export const createTaskCardTemplate = (task) => {
               </div>
             </div>
           </div>
-        </article>
-          `
+        </article> `
   );
 };
