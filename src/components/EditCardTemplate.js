@@ -11,7 +11,7 @@ export const createEditCardTemplate = (task) => {
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
   const isDateShowing = !!dueDate;
 
-  const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getDate()]}` : ``;
+  const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth()]}` : ``;
   const time = isDateShowing ? `${timeFormat(dueDate)}` : ``;
 
   const deadLineClass = isExpired ? `card--deadline` : ``;

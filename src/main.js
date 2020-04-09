@@ -32,7 +32,7 @@ const boardTasks = main.querySelector(`.board__tasks`);
 render(boardTasks, createEditCardTemplate(tasks[0]), `afterbegin`);
 
 const renderTasks = () => {
-  for (let i = 0; i < tasks.length - 1; i++) {
+  for (let i = 1; i <= tasks.length - 1; i++) {
     render(boardTasks, createTaskCardTemplate(tasks[i]), `beforeend`);
 
   }
