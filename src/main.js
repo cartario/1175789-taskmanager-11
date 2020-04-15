@@ -1,65 +1,88 @@
-import {createSiteMenuTemplate} from "./components/SiteMenuTemplate.js";
-import {createSiteFilterTemplate} from "./components/SiteFilterTemplate.js";
-import {createBoardTemplate} from "./components/BoardTemplate.js";
-import {createEditCardTemplate} from "./components/EditCardTemplate.js";
-import {createTaskCardTemplate} from "./components/TaskCardTemplate.js";
-import {createloadMoreButtonTemplate} from "./components/loadMoreButtonTemplate.js";
+import BoardComponent from "./components/BoardTemplate.js";
+import TasksComponent from "./components/tasks.js";
+import SiteMenuComponent from "./components/SiteMenuTemplate.js";
+import SortComponent from "./components/sort.js";
+import FilterComponent from "./components/SiteFilterTemplate.js";
+import TaskEditComponent from "./components/EditCardTemplate.js";
+import TaskComponent from "./components/TaskCardTemplate.js";
+import LoadMoreBtnComponent from "./components/loadMoreButtonTemplate.js";
 import {generateFilters} from "./mock/filter.js";
 import {generateTasks} from "./mock/task.js";
+import {render, RenderPosition} from "./utils.js";
 
-const TOTAL_TASKS = 23;
-const SHOWING_TASKS_ON_START = 8;
-const SHOWING_TASKS_BY_BUTTON = 4;
-
-// ф-я отрисовки в доме
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
+const TOTAL_TASKS = 8;
+const SHOWING_TASKS_ON_START = 3;
+const SHOWING_TASKS_BY_BUTTON = 3;
 
 // находит ключевые узлы
 const main = document.querySelector(`.main`);
 const mainControl = main.querySelector(`.main__control`);
+
 const filters = generateFilters();
 const tasks = generateTasks(TOTAL_TASKS);
 
-// отрисовывает
-render(mainControl, createBoardTemplate(), `afterend`);
-render(mainControl, createSiteFilterTemplate(filters), `afterend`);
-render(mainControl, createSiteMenuTemplate(), `beforeend`);
+render(mainControl, new SiteMenuComponent().getElement(), RenderPosition.BEFOREEND);
+render(main, new FilterComponent(filters).getElement(), RenderPosition.BEFOREEND);
 
-// находит ключевые узлы
-const boardTasks = main.querySelector(`.board__tasks`);
+const renderTask = (tasksListElement, task) => {
+  const onEditButtonClick = () => {
+    tasksListElement.replaceChild(taskEditComponent.getElement(), taskComponent.getElement());
+  };
 
-// отрисовывает taskEdit
-render(boardTasks, createEditCardTemplate(tasks[0]), `afterbegin`);
+  const taskComponent = new TaskComponent(task);
+  const editButton = taskComponent.getElement().querySelector(`.card__btn--edit`);
+  editButton.addEventListener(`click`, onEditButtonClick);
 
-let showingTasksCount = SHOWING_TASKS_ON_START;
+  const onEditFormSubmit = (evt) => {
+    evt.preventDefault();
+    tasksListElement.replaceChild(taskComponent.getElement(), taskEditComponent.getElement());
+  };
 
-const renderTasksOnStart = () => {
-  tasks.slice(1, SHOWING_TASKS_ON_START).forEach((task) => {
-    render(boardTasks, createTaskCardTemplate(task), `beforeend`);
+  const taskEditComponent = new TaskEditComponent(task);
+  const editForm = taskEditComponent.getElement().querySelector(`form`);
+  editForm.addEventListener(`submit`, onEditFormSubmit);
+
+
+  render(tasksListElement, taskComponent.getElement(), RenderPosition.BEFOREEND);
+  // render(tasksListElement, new TaskEditComponent(task).getElement(), RenderPosition.BEFOREEND);
+};
+
+const renderBoard = (boardComponent) => {
+  render(boardComponent.getElement(), new SortComponent().getElement(), RenderPosition.AFTERBEGIN);
+  render(boardComponent.getElement(), new TasksComponent().getElement(), RenderPosition.BEFOREEND);
+
+  const tasksListElement = boardComponent.getElement().querySelector(`.board__tasks`);
+
+  let showingTasksCount = SHOWING_TASKS_ON_START;
+
+  const renderTasksOnStart = () => {
+    tasks.slice(0, SHOWING_TASKS_ON_START).forEach((task) => {
+      renderTask(tasksListElement, task);
+    });
+  };
+
+  renderTasksOnStart();
+
+  // отрисовка и логика кнопки load-more
+  const loadMoreBtnComponent = new LoadMoreBtnComponent();
+  render(boardComponent.getElement(), loadMoreBtnComponent.getElement(), RenderPosition.BEFOREEND);
+
+  loadMoreBtnComponent.getElement().addEventListener(`click`, () => {
+    const prevTasksCount = showingTasksCount;
+    showingTasksCount = showingTasksCount + SHOWING_TASKS_BY_BUTTON;
+
+    tasks.slice(prevTasksCount, showingTasksCount).forEach((task) => {
+      renderTask(tasksListElement, task);
+    });
+
+    if (showingTasksCount >= tasks.length) {
+      loadMoreBtnComponent.getElement().remove();
+      loadMoreBtnComponent.removeElement();
+    }
   });
 };
 
-// отрисовывает tasks
-renderTasksOnStart();
+const boardComponent = new BoardComponent();
+render(main, boardComponent.getElement(), RenderPosition.BEFOREEND);
 
-// отрисовывает loadMore
-render(boardTasks, createloadMoreButtonTemplate(), `afterend`);
-
-// находит клчевой узел после отрисовки
-const loadMoreButtonElement = document.querySelector(`.load-more`);
-
-// обработчик loadMore
-loadMoreButtonElement.addEventListener(`click`, () => {
-  const prevTasksCount = showingTasksCount;
-  showingTasksCount = showingTasksCount + SHOWING_TASKS_BY_BUTTON;
-
-  tasks.slice(prevTasksCount, showingTasksCount).forEach((task) => {
-    render(boardTasks, createTaskCardTemplate(task), `beforeend`);
-  });
-
-  if (showingTasksCount >= tasks.length) {
-    loadMoreButtonElement.remove();
-  }
-});
+renderBoard(boardComponent);
