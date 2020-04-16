@@ -6,13 +6,14 @@ import FilterComponent from "./components/SiteFilterTemplate.js";
 import TaskEditComponent from "./components/EditCardTemplate.js";
 import TaskComponent from "./components/TaskCardTemplate.js";
 import LoadMoreBtnComponent from "./components/loadMoreButtonTemplate.js";
+import NoTasksComponent from "./components/noTasksTemplate.js";
 import {generateFilters} from "./mock/filter.js";
 import {generateTasks} from "./mock/task.js";
 import {render, RenderPosition} from "./utils.js";
 
-const TOTAL_TASKS = 8;
-const SHOWING_TASKS_ON_START = 3;
-const SHOWING_TASKS_BY_BUTTON = 3;
+const TOTAL_TASKS = 22;
+const SHOWING_TASKS_ON_START = 8;
+const SHOWING_TASKS_BY_BUTTON = 4;
 
 // находит ключевые узлы
 const main = document.querySelector(`.main`);
@@ -25,29 +26,49 @@ render(mainControl, new SiteMenuComponent().getElement(), RenderPosition.BEFOREE
 render(main, new FilterComponent(filters).getElement(), RenderPosition.BEFOREEND);
 
 const renderTask = (tasksListElement, task) => {
-  const onEditButtonClick = () => {
+  const replaceTaskToEdit = () => {
     tasksListElement.replaceChild(taskEditComponent.getElement(), taskComponent.getElement());
   };
 
   const taskComponent = new TaskComponent(task);
   const editButton = taskComponent.getElement().querySelector(`.card__btn--edit`);
-  editButton.addEventListener(`click`, onEditButtonClick);
+  editButton.addEventListener(`click`, () => {
+    replaceTaskToEdit();
+    document.addEventListener(`keydown`, onEscKeydown);
+  });
 
-  const onEditFormSubmit = (evt) => {
-    evt.preventDefault();
+  const replaceEditToTask = () => {
     tasksListElement.replaceChild(taskComponent.getElement(), taskEditComponent.getElement());
+  };
+
+  const onEscKeydown = (evt) => {
+    const isEscKey = evt.key === `Escape` || evt.key === `esc`;
+    if (isEscKey) {
+      replaceEditToTask();
+      document.removeEventListener(`keydown`, onEscKeydown);
+    }
   };
 
   const taskEditComponent = new TaskEditComponent(task);
   const editForm = taskEditComponent.getElement().querySelector(`form`);
-  editForm.addEventListener(`submit`, onEditFormSubmit);
-
+  editForm.addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
+    replaceEditToTask();
+    document.removeEventListener(`keydown`, onEscKeydown);
+  });
 
   render(tasksListElement, taskComponent.getElement(), RenderPosition.BEFOREEND);
   // render(tasksListElement, new TaskEditComponent(task).getElement(), RenderPosition.BEFOREEND);
 };
 
 const renderBoard = (boardComponent) => {
+  const isAllTasksArchived = tasks.every((task) => task.isArchive);
+
+  if (isAllTasksArchived) {
+    render(boardComponent.getElement(), new NoTasksComponent().getElement(), RenderPosition.BEFOREEND);
+    return;
+  }
+
   render(boardComponent.getElement(), new SortComponent().getElement(), RenderPosition.AFTERBEGIN);
   render(boardComponent.getElement(), new TasksComponent().getElement(), RenderPosition.BEFOREEND);
 
