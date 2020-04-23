@@ -1,4 +1,5 @@
-import {timeFormat, createElement} from "../utils.js";
+import AbstractComponent from "./abstract-component.js";
+import {timeFormat} from "../utils/common.js";
 import {MONTH_NAMES, DAYS, COLORS} from "../const.js";
 
 const createEditCardTemplate = (task) => {
@@ -109,9 +110,9 @@ const createEditCardTemplate = (task) => {
   );
 };
 
-export default class TaskEdit {
+export default class TaskEdit extends AbstractComponent {
   constructor(task) {
-    this.element = null;
+    super();
     this._task = task;
   }
 
@@ -119,15 +120,8 @@ export default class TaskEdit {
     return createEditCardTemplate(this._task);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setSubmitHandler(handler) {
+    this.getElement().querySelector(`form`)
+      .addEventListener(`submit`, handler);
   }
 }
