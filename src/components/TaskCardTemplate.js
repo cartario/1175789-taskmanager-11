@@ -2,9 +2,14 @@ import AbstractComponent from "./abstract-component.js";
 import {timeFormat} from "../utils/common.js";
 import {MONTH_NAMES} from "../const.js";
 
-const createTaskCardTemplate = (task) => {
+const createButtonMarkup = (name, isActive = true) => {
+  return `<button type="button" class="card__btn card__btn--${name} ${isActive ? `` : `card__btn--disabled`}">
+                  ${name}
+                </button>`;
+};
 
-  const {color, dueDate, description, isFavorite, isArchive, repeatingDays} = task;
+const createTaskCardTemplate = (task) => {
+  const {color, dueDate, description, repeatingDays} = task;
 
   const isDateShowing = !!dueDate;
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
@@ -17,25 +22,18 @@ const createTaskCardTemplate = (task) => {
 
   const time = isDateShowing ? `${timeFormat(dueDate)}` : ``;
 
-  const favoriteButtonInactiveClass = isFavorite ? `card__btn--disabled` : ``;
-  const archiveButtonInactiveClass = isArchive ? `card__btn--disabled` : ``;
-
+  const editButton = createButtonMarkup(`edit`);
+  const archiveButton = createButtonMarkup(`archive`, !task.isArchive);
+  const favoriteButton = createButtonMarkup(`favorite`, !task.isFavorite);
 
   return (`<article class="card card--${color} ${repeatClass} ${deadLineClass}">
           <div class="card__form">
             <div class="card__inner">
               <div class="card__control">
-                <button type="button" class="card__btn card__btn--edit">
-                  edit
-                </button>
-                <button type="button" class="card__btn card__btn--archive ${archiveButtonInactiveClass}">
-                  archive
-                </button>
-                <button type="button" class="card__btn card__btn--favorites ${favoriteButtonInactiveClass}">
-                  favorites
-                </button>
+                ${editButton}
+                ${archiveButton}
+                ${favoriteButton}
               </div>
-
               <div class="card__color-bar">
                 <svg class="card__color-bar-wave" width="100%" height="10">
                   <use xlink:href="#wave"></use>
@@ -76,6 +74,16 @@ export default class Task extends AbstractComponent {
 
   setEditButtonClickHandler(handler) {
     this.getElement().querySelector(`.card__btn--edit`)
+    .addEventListener(`click`, handler);
+  }
+
+  setArchiveButtonClickHandler(handler) {
+    this.getElement().querySelector(`.card__btn--archive`)
+    .addEventListener(`click`, handler);
+  }
+
+  setFavoriteButtonClickHandler(handler) {
+    this.getElement().querySelector(`.card__btn--favorite`)
     .addEventListener(`click`, handler);
   }
 }
