@@ -1,4 +1,4 @@
-import AbstractComponent from "./abstract-component.js";
+import AbstractSmartComponent from "./abstract-smart-component.js";
 import {timeFormat} from "../utils/common.js";
 import {MONTH_NAMES, DAYS, COLORS} from "../const.js";
 
@@ -110,10 +110,13 @@ const createEditCardTemplate = (task) => {
   );
 };
 
-export default class TaskEdit extends AbstractComponent {
+export default class TaskEdit extends AbstractSmartComponent {
   constructor(task) {
     super();
     this._task = task;
+    this._isDateShowing = !!task.dueDate;
+    this._submitHandler = null;
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
@@ -121,7 +124,28 @@ export default class TaskEdit extends AbstractComponent {
   }
 
   setSubmitHandler(handler) {
-    this.getElement().querySelector(`form`)
-      .addEventListener(`submit`, handler);
+    this.getElement().querySelector(`form`).addEventListener(`submit`, handler);
+
+    this._submitHandler = handler;
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelector(`.card__date-deadline-toggle`)
+      .addEventListener(`click`, () => {
+        this._isDateShowing = !this._isDateShowing;
+
+        this.rerender();
+      });
+  }
+
+  recoveryListeners() {
+    this.setSubmitHandler(this._submitHandler);
+    this._subscribeOnEvents();
+  }
+
+  rerender() {
+    super.rerender();
   }
 }

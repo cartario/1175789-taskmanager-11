@@ -25,3 +25,34 @@ render(main, boardComponent, RenderPosition.BEFOREEND);
 
 boardController.render(tasks);
 
+// const observer = {
+//   _observers: [],
+
+//   add(cb) {
+//     this._observers.push(cb);
+//   },
+
+//   remove(cb2) {
+//     this._observers = this._observers.filter((it) => it !== cb2);
+//   },
+
+//   notify() {
+//     this._observers.forEach((it) => it())
+//   },
+// };
+
+// const fn1 = () => alert(`fn1`);
+// const fn2 = () => alert(`fn2`);
+
+// const start = document.querySelector(`.control__label--new-task`);
+
+// observer.add(fn1);
+// observer.add(fn1);
+// observer.add(fn1);
+// observer.add(fn1);
+
+// start.addEventListener(`click`, () => {
+//   observer.notify();
+// })
+
+// debugger;
