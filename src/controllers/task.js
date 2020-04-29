@@ -29,6 +29,7 @@ export default class TaskController {
     this._taskComponent.setFavoriteButtonClickHandler(() => {
       this._onDataChange(this, task, Object.assign({}, task, {
         isFavorite: !task.isFavorite,
+
       }));
     });
 
@@ -39,6 +40,7 @@ export default class TaskController {
     });
 
     render(this._container, this._taskComponent, RenderPosition.BEFOREEND);
+
   }
 
   _replaceTaskToEdit() {
