@@ -2,16 +2,26 @@ import TaskComponent from "../components/TaskCardTemplate.js";
 import TaskEditComponent from "../components/EditCardTemplate.js";
 import {render, replace, RenderPosition} from "../utils/render.js";
 
+const Mode = {
+  DEFAULT: `default`,
+  EDIT: `edit`,
+};
+
 export default class TaskController {
-  constructor(container, onDataChange) {
+  constructor(container, onDataChange, onViewChange) {
     this._container = container;
     this._onDataChange = onDataChange;
+    this._onViewChange = onViewChange;
+    this._mode = Mode.DEFAULT;
     this._taskComponent = null;
     this._taskEditComponent = null;
     this._onEscKeydown = this._onEscKeydown.bind(this);
   }
 
   render(task) {
+    const oldTaskComponent = this._taskComponent;
+    const oldTaskEditComponent = this._taskEditComponent;
+
     this._taskComponent = new TaskComponent(task);
     this._taskEditComponent = new TaskEditComponent(task);
 
@@ -39,17 +49,31 @@ export default class TaskController {
 
     });
 
-    render(this._container, this._taskComponent, RenderPosition.BEFOREEND);
+    if (oldTaskEditComponent && oldTaskComponent) {
+      replace(this._taskComponent, oldTaskComponent);
+      replace(this._taskEditComponent, oldTaskEditComponent);
+    } else {
+      render(this._container, this._taskComponent, RenderPosition.BEFOREEND);
+    }
+  }
 
+  setDefaultView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._replaceEditToTask();
+    }
   }
 
   _replaceTaskToEdit() {
+    this._onViewChange();
     replace(this._taskEditComponent, this._taskComponent);
+    this._mode = Mode.EDIT;
   }
 
   _replaceEditToTask() {
-    replace(this._taskComponent, this._taskEditComponent);
     document.removeEventListener(`keydown`, this._onEscKeydown);
+    this._taskEditComponent.reset();
+    replace(this._taskComponent, this._taskEditComponent);
+    this._mode = Mode.DEFAULT;
   }
 
   _onEscKeydown(evt) {
