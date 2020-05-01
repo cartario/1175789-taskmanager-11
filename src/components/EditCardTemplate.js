@@ -6,15 +6,9 @@ const createEditCardTemplate = (task, options = {}) => {
 
   const {color, dueDate, description} = task;
   const {isDateShowing, isRepeatingClass, activeRepeatingDays} = options;
-
-  const isRepeating = (repeatingDays) => {
-    return Object.values(repeatingDays).some(Boolean);
-  };
-
-
   const repeatClass = isRepeatingClass ? `card--repeat` : ``;
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
-  const isBlockSaveButton = (isDateShowing && isRepeatingClass) || (isRepeatingClass && !isRepeating(activeRepeatingDays));
+  const isBlockSaveButton = isDateShowing || isRepeatingClass || Object.values(activeRepeatingDays).some(Boolean);
 
   const date = (isDateShowing && dueDate) ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth()]}` : ``;
   const time = (isDateShowing && dueDate) ? `${timeFormat(dueDate)}` : ``;
@@ -133,7 +127,6 @@ export default class TaskEdit extends AbstractSmartComponent {
       isDateShowing: this._isDateShowing,
       isRepeatingClass: this._isRepeatingClass,
       activeRepeatingDays: this._activeRepeatingDays,
-
     });
 
   }

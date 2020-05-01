@@ -7,8 +7,10 @@ import LoadMoreBtnComponent from "../components/loadMoreButtonTemplate.js";
 import {render, remove, RenderPosition} from "../utils/render.js";
 import TaskController from "./task.js";
 
-const SHOWING_TASKS_ON_START = 8;
-const SHOWING_TASKS_BY_BUTTON = 4;
+const ShowingTasks = {
+  ON_START: 8,
+  BY_BUTTON: 4,
+};
 
 const renderTasks = (taskListElement, tasks, onDataChange, onViewChange) => {
   return tasks.map((task) => {
@@ -47,9 +49,8 @@ export default class BoardController {
     this._noTasksComponent = new NoTasksComponent();
     this._sortComponent = new SortComponent();
     this._tasksComponent = new TasksComponent();
-    this._showingTasksCount = SHOWING_TASKS_ON_START;
+    this._showingTasksCount = ShowingTasks.ON_START;
     this._loadMoreBtnComponent = new LoadMoreBtnComponent();
-
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
@@ -91,7 +92,7 @@ export default class BoardController {
     this._loadMoreBtnComponent.setClickHandler(() => {
       const prevTasksCount = this._showingTasksCount;
       const taskListElement = this._tasksComponent.getElement();
-      this._showingTasksCount = this._showingTasksCount + SHOWING_TASKS_BY_BUTTON;
+      this._showingTasksCount = this._showingTasksCount + ShowingTasks.BY_BUTTON;
 
       const sortedTasks = getSortedTasks(this._tasks, this._sortComponent.getSortType(), prevTasksCount, this._showingTasksCount);
 
@@ -118,10 +119,11 @@ export default class BoardController {
 
   _onViewChange() {
     this._showedTaskControllers.forEach((it) => it.setDefaultView());
+
   }
 
   _onSortTypeChange(sortType) {
-    this._showingTasksCount = SHOWING_TASKS_ON_START;
+    this._showingTasksCount = ShowingTasks.ON_START;
     const sortedTasks = getSortedTasks(this._tasks, sortType, 0, this._showingTasksCount);
 
     const tasksListElement = this._tasksComponent.getElement();
