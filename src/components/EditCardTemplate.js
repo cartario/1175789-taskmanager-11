@@ -2,13 +2,17 @@ import AbstractSmartComponent from "./abstract-smart-component.js";
 import {timeFormat} from "../utils/common.js";
 import {MONTH_NAMES, DAYS, COLORS} from "../const.js";
 
+const isRepeating = (repeatingDays) => {
+  return Object.values(repeatingDays).some(Boolean);
+};
+
 const createEditCardTemplate = (task, options = {}) => {
 
   const {color, dueDate, description} = task;
   const {isDateShowing, isRepeatingClass, activeRepeatingDays} = options;
   const repeatClass = isRepeatingClass ? `card--repeat` : ``;
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
-  const isBlockSaveButton = isDateShowing || isRepeatingClass || Object.values(activeRepeatingDays).some(Boolean);
+  const isBlockSaveButton = (isDateShowing && isRepeatingClass) || (isRepeatingClass && !isRepeating(activeRepeatingDays));
 
   const date = (isDateShowing && dueDate) ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth()]}` : ``;
   const time = (isDateShowing && dueDate) ? `${timeFormat(dueDate)}` : ``;
@@ -115,7 +119,7 @@ export default class TaskEdit extends AbstractSmartComponent {
     super();
     this._task = task;
     this._isDateShowing = !!task.dueDate;
-    this._isRepeatingClass = Object.values(task.repeatingDays).some(Boolean);
+    this._isRepeatingClass = isRepeating(task.repeatingDays);
     this._activeRepeatingDays = Object.assign({}, task.repeatingDays);
 
     this._submitHandler = null;
