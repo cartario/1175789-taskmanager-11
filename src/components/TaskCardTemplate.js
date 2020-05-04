@@ -1,6 +1,5 @@
 import AbstractComponent from "./abstract-component.js";
-import {timeFormat} from "../utils/common.js";
-import {MONTH_NAMES} from "../const.js";
+import {formatTime, formatDate} from "../utils/common.js";
 
 const createButtonMarkup = (name, isActive = true) => {
   return `<button type="button" class="card__btn card__btn--${name} ${isActive ? `` : `card__btn--disabled`}">
@@ -18,9 +17,9 @@ const createTaskCardTemplate = (task) => {
   const repeatClass = isRepeatingClass ? `card--repeat` : ``;
 
   const deadLineClass = isExpired ? `card--deadline` : ``;
-  const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth()]}` : ``;
+  const date = isDateShowing ? formatDate(dueDate) : ``;
 
-  const time = isDateShowing ? `${timeFormat(dueDate)}` : ``;
+  const time = isDateShowing ? formatTime(dueDate) : ``;
 
   const editButton = createButtonMarkup(`edit`);
   const archiveButton = createButtonMarkup(`archive`, !task.isArchive);
