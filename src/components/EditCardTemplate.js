@@ -1,6 +1,8 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import {timeFormat} from "../utils/common.js";
 import {MONTH_NAMES, DAYS, COLORS} from "../const.js";
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
 
 const isRepeating = (repeatingDays) => {
   return Object.values(repeatingDays).some(Boolean);
